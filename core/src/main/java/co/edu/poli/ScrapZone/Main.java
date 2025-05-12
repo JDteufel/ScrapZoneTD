@@ -1,8 +1,13 @@
 package co.edu.poli.ScrapZone;
 
-/** This class serves only as the application scanning root. Any classes in its package (or any of the sub-packages)
- * with proper Autumn MVC annotations will be found, scanned and initiated. */
-public class Main {
-    /** Default application size. */
+import co.edu.poli.ScrapZone.view.GameScreen;
+import com.badlogic.gdx.Game;
+
+public class Main extends Game {
     public static final int WIDTH = 450, HEIGHT = 600;
+
+    @Override
+    public void create() {
+        setScreen(new GameScreen());
+    }
 }
