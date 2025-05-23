@@ -1,6 +1,6 @@
 package co.edu.poli.ScrapZone.entity;
 
-public class BasicEnemy {
+public class BasicEnemy extends Enemy {
     private static final float BASIC_HEALTH = 70f;
     private static final float BASIC_SPEED = 50f;
     private static final int BASIC_DAMAGE = 30;
