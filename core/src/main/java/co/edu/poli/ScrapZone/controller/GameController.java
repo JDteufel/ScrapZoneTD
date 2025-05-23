@@ -11,14 +11,14 @@ import com.github.czyzby.autumn.mvc.component.ui.controller.ViewRenderer;
 import com.github.czyzby.autumn.mvc.component.ui.controller.ViewResizer;
 import com.github.czyzby.autumn.mvc.component.ui.controller.impl.StandardViewShower;
 import com.github.czyzby.autumn.mvc.stereotype.View;
-import co.edu.poli.ScrapZone.service.Box2DService;
+import co.edu.poli.ScrapZone.service.EntityManager;
 
 /**
  * Renders Box2D world.
  */
 @View(id = "game", value = "ui/templates/game.lml", themes = "music/theme.ogg")
 public class GameController extends StandardViewShower implements ViewResizer, ViewRenderer {
-    @Inject private Box2DService box2d;
+    @Inject private EntityManager box2d;
     private final Box2DDebugRenderer renderer = new Box2DDebugRenderer();
 
     @Override

@@ -1,17 +1,18 @@
 package co.edu.poli.ScrapZone.entity;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
-
 public class TankEnemy extends Enemy {
-    public TankEnemy(World world, Vector2 position) {
-        super(world, position);
-        this.health = 200;
-        this.speed = 0.8f;
+    private static final float TANK_HEALTH = 100f;
+    private static final float TANK_SPEED = 30f;
+    private static final int TANK_DAMAGE = 20;
+    private static final float TANK_WIDTH = 32f;
+    private static final float TANK_HEIGHT = 32f;
+
+    public TankEnemy() {
+        super(TANK_HEALTH, TANK_SPEED, TANK_DAMAGE, TANK_WIDTH, TANK_HEIGHT, EnemyType.TANK);
     }
 
     @Override
-    public void update(float delta) {
-        body.setLinearVelocity(speed, 0);
+    protected void updateSpecific(float delta) {
+
     }
 }

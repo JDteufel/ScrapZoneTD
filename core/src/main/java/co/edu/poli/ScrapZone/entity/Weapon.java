@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Weapon {
     protected float damage;
-    protected float fireRate; // en segundos entre disparos
+    protected float fireRate;
     protected float cooldown;
     protected Vector2 position;
     protected World world;
@@ -34,4 +34,5 @@ public abstract class Weapon {
     }
 
     protected abstract void fire(Vector2 target);
+
 }

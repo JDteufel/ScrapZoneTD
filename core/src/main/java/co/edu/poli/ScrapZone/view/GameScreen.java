@@ -1,6 +1,5 @@
 package co.edu.poli.ScrapZone.view;
 
-import co.edu.poli.ScrapZone.service.Box2DService;
 import co.edu.poli.ScrapZone.controller.GameController;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -26,14 +25,17 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClearColor(0.2f, 0.3f, 0.8f, 1f); // Azul en lugar de negro
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        stage.act(delta);
         gameController.render(stage, delta);
+        stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
         gameController.resize(stage, width, height);
     }
 

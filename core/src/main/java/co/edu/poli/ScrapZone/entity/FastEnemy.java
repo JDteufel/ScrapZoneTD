@@ -1,17 +1,19 @@
 package co.edu.poli.ScrapZone.entity;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
-
 public class FastEnemy extends Enemy {
-    public FastEnemy(World world, Vector2 position) {
-        super(world, position);
-        this.health = 50;
-        this.speed = 2.5f;
+
+    private static final float FAST_HEALTH = 50f;
+    private static final float FAST_SPEED = 100f;
+    private static final int FAST_DAMAGE = 10;
+    private static final float FAST_WIDTH = 32f;
+    private static final float FAST_HEIGHT = 32f;
+
+    public FastEnemy() {
+        super(FAST_HEALTH, FAST_SPEED, FAST_DAMAGE, FAST_WIDTH, FAST_HEIGHT, EnemyType.FAST);
     }
 
     @Override
-    public void update(float delta) {
-        body.setLinearVelocity(speed, 0);
+    protected void updateSpecific(float delta) {
+
     }
 }
