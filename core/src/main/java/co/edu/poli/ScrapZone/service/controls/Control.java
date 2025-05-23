@@ -30,9 +30,6 @@ public interface Control {
     /** @return true if the player is active and can play with these controls. */
     boolean isActive();
 
-    /** @return type of controls. */
-    ControlType getType();
-
     /** Clears state variables. */
     void reset();
 }

@@ -9,8 +9,7 @@ import com.github.czyzby.autumn.mvc.stereotype.preference.Property;
 import com.github.czyzby.kiwi.util.gdx.GdxUtilities;
 import com.github.czyzby.kiwi.util.gdx.collection.GdxArrays;
 import co.edu.poli.ScrapZone.configuration.Configuration;
-import co.edu.poli.ScrapZone.service.controls.ControlType;
-import co.edu.poli.ScrapZone.service.controls.impl.KeyboardControl;
+
 import co.edu.poli.ScrapZone.service.controls.impl.TouchControl;
 
 /** Allows to save controls in preferences. */
@@ -22,11 +21,7 @@ public class ControlsPreference extends AbstractPreference<Array<ControlsData>> 
     public Array<ControlsData> getDefault() {
         final Array<ControlsData> controls = GdxArrays.newArray();
         // First player defaults to touch (on mobile) or keyboard (on desktop) controls.
-        controls.add(GdxUtilities.isMobile() ? new TouchControl().toData() : new KeyboardControl().toData());
-        for (int index = 1; index < Configuration.PLAYERS_AMOUNT; index++) {
-            // Other players are simply inactive:
-            controls.add(new ControlsData(ControlType.INACTIVE));
-        }
+        controls.add(GdxUtilities.isMobile() ? new TouchControl().toData() : new TouchControl().toData());
         return controls;
     }
 

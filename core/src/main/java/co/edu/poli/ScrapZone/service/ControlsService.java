@@ -21,9 +21,6 @@ public class ControlsService {
     @Initiate
     public void readControlsFromPreferences() {
         final Array<ControlsData> controlsPreferences = preference.get();
-        for (final ControlsData data : controlsPreferences) {
-            controls.add(data.type.create(data));
-        }
     }
 
     @Destroy(priority = AutumnActionPriority.TOP_PRIORITY)

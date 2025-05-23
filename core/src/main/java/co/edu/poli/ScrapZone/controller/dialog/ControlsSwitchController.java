@@ -16,10 +16,6 @@ import com.github.czyzby.lml.annotation.LmlActor;
 import com.github.czyzby.lml.parser.action.ActionContainer;
 import co.edu.poli.ScrapZone.service.ControlsService;
 import co.edu.poli.ScrapZone.service.controls.Control;
-import co.edu.poli.ScrapZone.service.controls.ControlType;
-import co.edu.poli.ScrapZone.service.controls.impl.GamePadControl;
-import co.edu.poli.ScrapZone.service.controls.impl.InactiveControl;
-import co.edu.poli.ScrapZone.service.controls.impl.KeyboardControl;
 import co.edu.poli.ScrapZone.service.controls.impl.TouchControl;
 
 /** Allows to switch control types. */
@@ -44,41 +40,11 @@ public class ControlsSwitchController implements ActionContainer, ViewDialogShow
         gamePadControlButton.setDisabled(GdxArrays.isEmpty(Controllers.getControllers()));
     }
 
-    @LmlAction("controls")
-    public Iterable<ControlType> getControlTypes() {
-        if (GdxUtilities.isRunningOnAndroid()) {
-            // Keyboard controls on Android do not work well...
-            return GdxArrays.newArray(ControlType.TOUCH, ControlType.PAD, ControlType.INACTIVE);
-        } else if (GdxUtilities.isRunningOnIOS()) {
-            // Controllers (pads) do not exactly work on iOS.
-            return GdxArrays.newArray(ControlType.TOUCH, ControlType.INACTIVE);
-        } // Desktop supports all controllers:
-        return GdxArrays.newArray(ControlType.values());
-    }
+    
 
     @LmlAction("TOUCH")
     public void setTouchControls() {
         changeControls(new TouchControl());
-    }
-
-    @LmlAction("INACTIVE")
-    public void setInactiveControls() {
-        changeControls(new InactiveControl());
-    }
-
-    @LmlAction("KEYBOARD")
-    public void setKeyboardControls() {
-        changeControls(new KeyboardControl());
-    }
-
-    @LmlAction("PAD")
-    public void setGamePadControls() {
-        final Array<Controller> controllers = Controllers.getControllers();
-        if (GdxArrays.isEmpty(controllers)) {
-            changeControls(new InactiveControl());
-        } else {
-            changeControls(new GamePadControl(controllers.first()));
-        }
     }
 
     private void changeControls(final Control control) {

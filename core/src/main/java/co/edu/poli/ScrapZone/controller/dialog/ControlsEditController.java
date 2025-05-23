@@ -33,9 +33,6 @@ import com.github.czyzby.lml.annotation.LmlActor;
 import com.github.czyzby.lml.parser.action.ActionContainer;
 import co.edu.poli.ScrapZone.service.controls.Control;
 import co.edu.poli.ScrapZone.service.controls.ControlListener;
-import co.edu.poli.ScrapZone.service.controls.ControlType;
-import co.edu.poli.ScrapZone.service.controls.impl.GamePadControl;
-import co.edu.poli.ScrapZone.service.controls.impl.KeyboardControl;
 import com.kotcrab.vis.ui.widget.VisSelectBox;
 
 /** Allows to edit chosen controls. */
@@ -64,7 +61,18 @@ public class ControlsEditController implements ActionContainer, ViewDialogShower
     @LmlActor("padLeft") private TextButton padLeft;
     @LmlActor("padRight") private TextButton padRight;
     @LmlActor("padJump") private TextButton padJump;
-    private final ControllerListener controllerListener;
+    private final ControllerListener controllerListener = new ControllerAdapter() {
+        @Override
+        public boolean buttonDown(Controller controller, int buttonCode) {
+            if (checkedButton != null) {
+                checkedButton.setText(String.valueOf(buttonCode));
+                checkedButton.setChecked(false);
+                checkedButton = null;
+                controller.removeListener(this);
+            }
+            return true;
+        }
+    };
     @LmlActor("invertX") private Button invertXButton;
     @LmlActor("invertY") private Button invertYButton;
     @LmlActor("invertXY") private Button invertXYButton;
@@ -72,61 +80,7 @@ public class ControlsEditController implements ActionContainer, ViewDialogShower
     private Array<Controller> controllers;
 
     public ControlsEditController() {
-        // Allows to change current keyboard controls:
-        keyboardListener.addListener(new InputListener() {
-            @Override
-            public boolean keyUp(final InputEvent event, final int keycode) {
-                if (checkedButton == null) {
-                    keyboardListener.remove();
-                    return false;
-                }
-                final KeyboardControl keyboardControl = (KeyboardControl) control;
-                if (checkedButton == keyUp) {
-                    keyboardControl.setUp(keycode);
-                } else if (checkedButton == keyDown) {
-                    keyboardControl.setDown(keycode);
-                } else if (checkedButton == keyLeft) {
-                    keyboardControl.setLeft(keycode);
-                } else if (checkedButton == keyRight) {
-                    keyboardControl.setRight(keycode);
-                } else if (checkedButton == keyJump) {
-                    keyboardControl.setJump(keycode);
-                }
-                checkedButton.setText(Keys.toString(keycode));
-                checkedButton.setChecked(false);
-                checkedButton = null;
-                keyboardListener.remove();
-                return false;
-            }
-        });
-
-        // Allows to change controller shortcuts:
-        controllerListener = new ControllerAdapter() {
-            @Override
-            public boolean buttonUp(final Controller controller, final int buttonIndex) {
-                if (checkedButton == null) {
-                    controller.removeListener(controllerListener);
-                    return false;
-                }
-                final GamePadControl keyboardControl = (GamePadControl) control;
-                if (checkedButton == padUp) {
-                    keyboardControl.setUp(buttonIndex);
-                } else if (checkedButton == padDown) {
-                    keyboardControl.setDown(buttonIndex);
-                } else if (checkedButton == padLeft) {
-                    keyboardControl.setLeft(buttonIndex);
-                } else if (checkedButton == padRight) {
-                    keyboardControl.setRight(buttonIndex);
-                } else if (checkedButton == padJump) {
-                    keyboardControl.setJump(buttonIndex);
-                }
-                checkedButton.setText(String.valueOf(buttonIndex));
-                checkedButton.setChecked(false);
-                checkedButton = null;
-                controller.removeListener(controllerListener);
-                return false;
-            }
-        };
+        // No additional initialization required
     }
 
     /** @param control will be edited by this screen. */
@@ -138,7 +92,6 @@ public class ControlsEditController implements ActionContainer, ViewDialogShower
     public void doBeforeShow(final Window dialog) {
         attachListeners();
         setCurrentControls();
-        changeView();
         updateAction.reset();
         mockUpEntity.setColor(Color.WHITE);
         mockUpEntity.addAction(Actions.forever(updateAction));
@@ -159,45 +112,7 @@ public class ControlsEditController implements ActionContainer, ViewDialogShower
     }
 
     private void setCurrentControls() {
-        if (control.getType() == ControlType.KEYBOARD) {
-            final KeyboardControl keyboardControl = (KeyboardControl) control;
-            keyUp.setText(Keys.toString(keyboardControl.getUp()));
-            keyDown.setText(Keys.toString(keyboardControl.getDown()));
-            keyLeft.setText(Keys.toString(keyboardControl.getLeft()));
-            keyRight.setText(Keys.toString(keyboardControl.getRight()));
-            keyJump.setText(Keys.toString(keyboardControl.getJump()));
-        } else if (control.getType() == ControlType.PAD) {
-            final GamePadControl gamePadControl = (GamePadControl) control;
-            padUp.setText(String.valueOf(gamePadControl.getUp()));
-            padDown.setText(String.valueOf(gamePadControl.getDown()));
-            padLeft.setText(String.valueOf(gamePadControl.getLeft()));
-            padRight.setText(String.valueOf(gamePadControl.getRight()));
-            padJump.setText(String.valueOf(gamePadControl.getJump()));
-            invertXButton.setChecked(gamePadControl.isInvertX());
-            invertYButton.setChecked(gamePadControl.isInvertY());
-            invertXYButton.setChecked(gamePadControl.isInvertXY());
-            // Allowing the player to choose controller device:
-            controllersSelect.getItems().clear();
-            controllersSelect.getSelection().setMultiple(false);
-            controllersSelect.getSelection().setRequired(true);
-            controllers = Controllers.getControllers();
-            final String[] items = new String[controllers.size];
-            for (int index = 0; index < controllers.size; index++) {
-                final Controller controller = controllers.get(index);
-                items[index] = controller.getName().replaceAll(Strings.WHITESPACE_SPLITTER_REGEX, " ");
-            }
-            controllersSelect.setItems(items);
-            final int controllerIndex = controllers.indexOf(gamePadControl.getController(), true);
-            controllersSelect.setSelectedIndex(controllerIndex < 0 ? 0 : controllerIndex);
-        }
-    }
-
-    private void changeView() {
-        mainTable.clearChildren();
-        // Finding view relevant to the controls:
-        final Actor view = views.get(control.getType().name());
-        mainTable.add(view).grow();
-        mainTable.pack();
+        
     }
 
     @LmlAction("hide")
@@ -207,9 +122,6 @@ public class ControlsEditController implements ActionContainer, ViewDialogShower
         if (checkedButton != null) {
             checkedButton.setChecked(false);
             checkedButton = null;
-        }
-        if (control.getType() == ControlType.PAD) {
-            ((GamePadControl) control).getController().removeListener(controllerListener);
         }
         Gdx.input.setInputProcessor(stage);
     }
@@ -227,46 +139,6 @@ public class ControlsEditController implements ActionContainer, ViewDialogShower
             checkedButton = null;
             keyboardListener.remove();
         }
-    }
-
-    @LmlAction("setPad")
-    public void setGamePadShortcut(final TextButton button) {
-        final GamePadControl gamePadControl = (GamePadControl) control;
-        if (button.isChecked()) {
-            if (checkedButton != null) {
-                checkedButton.setChecked(false);
-            }
-            checkedButton = button;
-            gamePadControl.getController().addListener(controllerListener);
-        } else {
-            checkedButton = null;
-            gamePadControl.getController().removeListener(controllerListener);
-        }
-    }
-
-    @LmlAction("changeController")
-    public void changeController(final VisSelectBox<String> select) {
-        if (select.getSelectedIndex() < 0) {
-            return;
-        }
-        final Controller controller = controllers.get(select.getSelectedIndex());
-        ((GamePadControl) control).setController(controller);
-        control.attachInputListener(null);
-    }
-
-    @LmlAction("invertX")
-    public void setInvertX(final Button button) {
-        ((GamePadControl) control).setInvertX(button.isChecked());
-    }
-
-    @LmlAction("invertY")
-    public void setInvertY(final Button button) {
-        ((GamePadControl) control).setInvertY(button.isChecked());
-    }
-
-    @LmlAction("invertXY")
-    public void setInvertXY(final Button button) {
-        ((GamePadControl) control).setInvertXY(button.isChecked());
     }
 
     /** Updates position of mock up entity. */
